@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # ── Install vibe-trading ──
-RUN pip install --no-cache-dir vibe-trading
+RUN pip install --no-cache-dir vibe-trading-ai
 
 # ── Install hermes-agent in a venv ──
 RUN python3 -m venv /opt/hermes-venv \
