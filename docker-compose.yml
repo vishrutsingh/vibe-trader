@@ -28,6 +28,7 @@ services:
       - trader-state:/root/.vibe-trading
       - trader-home:/root/.hermes
       - ./.env:/trader/.env:ro
+      - ./SOUL.md:/trader/hermes-home/profiles/vibe-trading/SOUL.md:ro
     depends_on:
       mcp:
         condition: service_healthy
