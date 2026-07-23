@@ -1,0 +1,50 @@
+services:
+  mcp:
+    build: .
+    container_name: trader-mcp
+    command: vibe-trading-mcp --transport http --host 0.0.0.0 --port 8900
+    volumes:
+      - trader-data:/trader
+      - trader-state:/root/.vibe-trading
+      - trader-home:/root/.hermes
+    ports:
+      - "8900:8900"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8900/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  gateway:
+    build: .
+    container_name: trader-gateway
+    command: hermes -p vibe-trading gateway run --replace
+    volumes:
+      - trader-data:/trader
+      - trader-state:/root/.vibe-trading
+      - trader-home:/root/.hermes
+    depends_on:
+      mcp:
+        condition: service_healthy
+    restart: unless-stopped
+
+  dashboard:
+    build: .
+    container_name: trader-dashboard
+    command: hermes -p vibe-trading dashboard
+    volumes:
+      - trader-data:/trader
+      - trader-state:/root/.vibe-trading
+      - trader-home:/root/.hermes
+    ports:
+      - "9119:9119"
+    depends_on:
+      mcp:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  trader-data:
+  trader-state:
+  trader-home:
